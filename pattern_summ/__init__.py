@@ -1,1 +1,1 @@
-from .optimizer import PatternEvolution
+from .summarization import PatternSummarization

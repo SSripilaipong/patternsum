@@ -176,25 +176,25 @@ class Pattern(WordSequence):
         }
         self.action.append(action)
 
-    def mutate(self):
+    def mutate(self, prob_add, prob_merge, prob_split, prob_drop):
         prob = np.random.random()
 
-        prob -= 0.20
+        prob -= prob_add
         if prob <= 0:
             self.mutate_add()
             prob = 999
 
-        prob -= 0.30
+        prob -= prob_merge
         if prob <= 0:
             self.mutate_merge()
             prob = 999
 
-        prob -= 0.30
+        prob -= prob_split
         if prob <= 0:
             self.mutate_split()
             prob = 999
 
-        prob -= 0.20
+        prob -= prob_drop
         if prob <= 0:
             self.mutate_drop()
 

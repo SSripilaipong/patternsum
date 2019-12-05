@@ -8,10 +8,16 @@ from .util import get_random_seed_generator
 
 
 class Species:
-    def __init__(self, random_seed_generator=None, representative=None, prob_mutate=0.5, n_pools=None):
+    def __init__(self, random_seed_generator=None, representative=None, prob_mutate=0.5,
+                 prob_mutate_add=0.20, prob_mutate_merge=0.30, prob_mutate_split=0.30, prob_mutate_drop=0.20,
+                 n_pools=None):
         self.n_pools = n_pools or max(1, multiprocessing.cpu_count() - 1)
         self.representative = representative
         self.prob_mutate = prob_mutate
+        self.prob_mutate_add = prob_mutate_add
+        self.prob_mutate_merge = prob_mutate_merge
+        self.prob_mutate_split = prob_mutate_split
+        self.prob_mutate_drop = prob_mutate_drop
         self.random_seed_generator = random_seed_generator or get_random_seed_generator(1, 99999)
 
         self.population = []
@@ -32,27 +38,6 @@ class Species:
         ranking = (-self._fitness).argsort().argsort()  # type: np.ndarray
         self.population = list(itertools.compress(self.population, ranking < n_survivors))
 
-    @staticmethod
-    def _reproduce(self_population, couples, prob_mutate, random_seed):
-        np.random.seed(random_seed)
-        random.seed(random_seed)
-
-        population = []
-        for i, j in couples:
-            a, b = self_population[i], self_population[j]
-            offspring = a.crossover(b).copy()
-
-            if not len(offspring):
-                continue
-
-            if np.random.random() < prob_mutate:
-                offspring.mutate()
-
-            if len(offspring):
-                population.append(offspring)
-
-        return population
-
     def reproduce(self, population_size):
         n_couples = int(population_size) - len(self)
         if n_couples == 0:
@@ -68,12 +53,15 @@ class Species:
         pool = multiprocessing.Pool(self.n_pools)
         data_generator = zip(itertools.repeat(self.population),
                              couples_set, itertools.repeat(self.prob_mutate),
+                             itertools.repeat(self.prob_mutate_add),
+                             itertools.repeat(self.prob_mutate_merge),
+                             itertools.repeat(self.prob_mutate_split),
+                             itertools.repeat(self.prob_mutate_drop),
                              self.random_seed_generator)
-        population = sum(pool.starmap(self._reproduce, data_generator), [])
+        population = sum(pool.starmap(_reproduce, data_generator), [])
         pool.close()
 
         self.population += population
-        # self.population = list(set(self.population))
         return self.population
 
     def add(self, pattern):
@@ -97,3 +85,25 @@ class Species:
 
     def __lt__(self, other):
         return self.fitness < other.fitness
+
+
+def _reproduce(self_population, couples, prob_mutate,
+               prob_mutate_add, prob_mutate_merge, prob_mutate_split, prob_mutate_drop, random_seed):
+    np.random.seed(random_seed)
+    random.seed(random_seed)
+
+    population = []
+    for i, j in couples:
+        a, b = self_population[i], self_population[j]
+        offspring = a.crossover(b).copy()
+
+        if not len(offspring):
+            continue
+
+        if np.random.random() < prob_mutate:
+            offspring.mutate(prob_mutate_add, prob_mutate_merge, prob_mutate_split, prob_mutate_drop)
+
+        if len(offspring):
+            population.append(offspring)
+
+    return population
