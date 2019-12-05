@@ -20,7 +20,6 @@ class PatternSummarization:
                                    prob_mutate_add=prob_mutate_add, prob_mutate_merge=prob_mutate_merge,
                                    prob_mutate_split=prob_mutate_split, prob_mutate_drop=prob_mutate_drop,
                                    n_pools=self.n_pools, random_seed=self.random_seed)
-        self.generation = 0
 
     @property
     def n_survivors(self):
@@ -36,9 +35,9 @@ class PatternSummarization:
 
         self.evolution.initialize()
 
-    def fit(self, generations=1, random_seed=None):
-        self._initialize(random_seed)
+    def fit(self, generations=1, random_seed=None, reset=True):
+        if reset:
+            self._initialize(random_seed)
 
         for _ in range(generations):
             self.evolution.step()
-            self.generation += 1

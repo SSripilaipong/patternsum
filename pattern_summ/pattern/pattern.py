@@ -75,18 +75,19 @@ class Pattern(WordSequence):
             self.calculate_tightness()
         return self._tightness
 
-    def crossover(self, other):
+    def crossover(self, other, generation):
         ws = self.intersection(other)
         pattern = Pattern(ws, self.alpha, self.beta)
         action = {
             'name': 'crossover',
             'parent': (tuple(self), tuple(other)),
             'ws': tuple(pattern),
+            'generation': generation,
         }
         pattern.action.append(action)
         return pattern
 
-    def mutate_add(self):
+    def mutate_add(self, generation):
         if not self.sample:
             return
 
@@ -106,11 +107,12 @@ class Pattern(WordSequence):
                         'location': p,
                     },
                     'ws': tuple(self),
+                    'generation': generation,
                 }
                 self.action.append(action)
                 break
 
-    def mutate_merge(self):
+    def mutate_merge(self, generation):
         if len(self) == 1:
             return
 
@@ -128,10 +130,11 @@ class Pattern(WordSequence):
                 'index': index,
             },
             'ws': tuple(self),
+            'generation': generation,
         }
         self.action.append(action)
 
-    def mutate_split(self):
+    def mutate_split(self, generation):
         index = np.random.randint(0, len(self))
         if len(self[index]) == 1:
             return
@@ -147,10 +150,11 @@ class Pattern(WordSequence):
                 'location': i,
             },
             'ws': tuple(self),
+            'generation': generation,
         }
         self.action.append(action)
 
-    def mutate_drop(self):
+    def mutate_drop(self, generation):
         if len(self) == 1 and len(self[0]) == 1:
             return
 
@@ -173,30 +177,31 @@ class Pattern(WordSequence):
                 'index': i,
             },
             'ws': tuple(self),
+            'generation': generation,
         }
         self.action.append(action)
 
-    def mutate(self, prob_add, prob_merge, prob_split, prob_drop):
+    def mutate(self, prob_add, prob_merge, prob_split, prob_drop, generation):
         prob = np.random.random()
 
         prob -= prob_add
         if prob <= 0:
-            self.mutate_add()
+            self.mutate_add(generation)
             prob = 999
 
         prob -= prob_merge
         if prob <= 0:
-            self.mutate_merge()
+            self.mutate_merge(generation)
             prob = 999
 
         prob -= prob_split
         if prob <= 0:
-            self.mutate_split()
+            self.mutate_split(generation)
             prob = 999
 
         prob -= prob_drop
         if prob <= 0:
-            self.mutate_drop()
+            self.mutate_drop(generation)
 
         self.update()
 
@@ -204,13 +209,20 @@ class Pattern(WordSequence):
         assert self.match_indexes is not None
         assert other.match_indexes is not None
 
-        intersection = (self.match_indexes & other.match_indexes).sum()
-        total = self.match_count
-
-        if total == 0:
+        if 0 in (self.match_count, other.match_count):
             dist = 1
         else:
-            dist = 1 - (intersection / total)
+            intersection = (self.match_indexes & other.match_indexes).sum()
+            if intersection == 0:
+                dist = 1
+            else:
+                left = intersection / self.match_count
+                right = intersection / other.match_count
+
+                if 0 in (left, right):
+                    dist = 1
+                else:
+                    dist = 1 - 2 / (1/left + 1/right)
 
         return dist
 

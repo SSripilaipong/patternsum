@@ -36,6 +36,7 @@ class Evolution:
         self.fitness = np.array([])
         self.species = []
         self.population = []
+        self.generation = 0
 
         self.pattern_scores = ScoreManager()
 
@@ -50,6 +51,8 @@ class Evolution:
         self.calculate_fitness()
         self.specify()
 
+        self.generation = 0
+
     def set_random_seed(self, random_seed):
         self.random_seed = random_seed
 
@@ -63,7 +66,8 @@ class Evolution:
         return Species(representative=pattern, prob_mutate=self.prob_mutate,
                        prob_mutate_add=self.prob_mutate_add, prob_mutate_merge=self.prob_mutate_merge,
                        prob_mutate_split=self.prob_mutate_split, prob_mutate_drop=self.prob_mutate_drop,
-                       n_pools=self.n_pools, random_seed_generator=self.random_seed_generator)
+                       generation=self.generation, n_pools=self.n_pools,
+                       random_seed_generator=self.random_seed_generator)
 
     def specify(self):
         self.population = sorted(self.population, reverse=True)
@@ -119,7 +123,7 @@ class Evolution:
             pool = multiprocessing.Pool(self.n_pools)
             f = functools.partial(_generate_population, data_manager=self.data_manager,
                                   tightness_alpha=self.tightness_alpha,
-                                  tightness_beta=self.tightness_beta)
+                                  tightness_beta=self.tightness_beta, generation=self.generation)
             result += sum(pool.starmap(f, zip(indexes_set, self.random_seed_generator)), [])
             pool.close()
 
@@ -195,7 +199,7 @@ class Evolution:
 
         self.population = sum((s.population for s in self.species if len(s) <= 1), [])
         for sp, si in zip(species_filter, species_population_size):
-            self.population += sp.reproduce(si)
+            self.population += sp.reproduce(si, self.generation)
 
         availability = self.population_size - len(self.population)
         if availability > 0:
@@ -206,12 +210,16 @@ class Evolution:
         self.species = []
 
     def step(self):
+        for s in self.species:
+            s.generation += 1
+        self.generation += 1
+
         self.eliminate()
         self.reproduce()
         self.specify()
 
 
-def _generate_population(indexes, random_seed, data_manager, tightness_alpha, tightness_beta):
+def _generate_population(indexes, random_seed, data_manager, tightness_alpha, tightness_beta, generation):
     np.random.seed(random_seed)
     random.seed(random_seed)
 
@@ -225,6 +233,8 @@ def _generate_population(indexes, random_seed, data_manager, tightness_alpha, ti
             action = {
                 'name': 'create',
                 'string': (tuple(a), tuple(b)),
+                'ws': tuple(pattern),
+                'generation': generation,
             }
             pattern.action.append(action)
             result.append(pattern)
