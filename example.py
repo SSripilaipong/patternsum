@@ -42,12 +42,18 @@ def generate_data():
 
 def main():
     data = generate_data()
-    opt = PatternSummarization(data, 300, 120, random_seed=random_seed, alpha=1, beta=0.5,
+    opt = PatternSummarization(data, 300, 120, random_seed=random_seed, alpha=2, beta=1,
                                prob_mutate_add=0.10, prob_mutate_merge=0.10, prob_mutate_split=0.45,
-                               prob_mutate_drop=0.35)
-    opt.evolve(generations=50)
+                               prob_mutate_drop=0.35,
+                               n_best=10, min_acc=0.20)
+    opt.evolve(generations=10)
     for s in opt.optimizer.species:
-        print(f'    {s.representative.fitness:5.2f} {s.representative.words}')
+        p = s.representative
+        print(f'    {p.fitness:5.2f} {p.accuracy:5.2f} {p.tightness:5.2f} {s.convergence:5.2f} {p.words}')
+    print()
+    print('result:')
+    for p in opt.get_patterns():
+        print(p)
 
 
 if __name__ == '__main__':
