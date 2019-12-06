@@ -45,8 +45,8 @@ def main():
     opt = PatternSummarization(data, 300, 120, random_seed=random_seed, alpha=1, beta=0.5,
                                prob_mutate_add=0.10, prob_mutate_merge=0.10, prob_mutate_split=0.45,
                                prob_mutate_drop=0.35)
-    opt.fit(generations=50)
-    for s in opt.evolution.species:
+    opt.evolve(generations=50)
+    for s in opt.optimizer.species:
         print(f'    {s.representative.fitness:5.2f} {s.representative.words}')
 
 

@@ -12,7 +12,7 @@ from pattern_summ.pattern import WordSequence, Pattern
 from .score import ScoreManager
 
 
-class Evolution:
+class Optimizer:
     def __init__(self, data_manager, population_size, n_survivors, tightness_alpha=2, tightness_beta=1,
                  join_thresh=0.5, prob_mutate=0.9, prob_mutate_add=0.20, prob_mutate_merge=0.30,
                  prob_mutate_split=0.30, prob_mutate_drop=0.20, n_pools=None, random_seed=None):

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .data_manager import DataManager
-from .evolution import Evolution
+from .optimizer import Optimizer
 
 
 class PatternSummarization:
@@ -14,7 +14,7 @@ class PatternSummarization:
         self.n_pools = n_pools
         self.random_seed = random_seed
 
-        self.evolution = Evolution(data_manager=self.data_manager, population_size=population_size,
+        self.optimizer = Optimizer(data_manager=self.data_manager, population_size=population_size,
                                    n_survivors=n_survivors, tightness_alpha=alpha, tightness_beta=beta,
                                    join_thresh=join_thresh, prob_mutate=prob_mutate,
                                    prob_mutate_add=prob_mutate_add, prob_mutate_merge=prob_mutate_merge,
@@ -23,21 +23,21 @@ class PatternSummarization:
 
     @property
     def n_survivors(self):
-        return self.evolution.n_survivors
+        return self.optimizer.n_survivors
 
     @property
     def population_size(self):
-        return self.evolution.population_size
+        return self.optimizer.population_size
 
     def _initialize(self, random_seed):
         if random_seed:
-            self.evolution.set_random_seed(random_seed)
+            self.optimizer.set_random_seed(random_seed)
 
-        self.evolution.initialize()
+        self.optimizer.initialize()
 
-    def fit(self, generations=1, random_seed=None, reset=True):
+    def evolve(self, generations=1, random_seed=None, reset=False):
         if reset:
             self._initialize(random_seed)
 
         for _ in range(generations):
-            self.evolution.step()
+            self.optimizer.step()
