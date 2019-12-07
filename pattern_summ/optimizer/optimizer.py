@@ -63,7 +63,7 @@ class Optimizer:
         self.random_seed_generator = get_random_seed_generator(1, 99999, self.random_seed)
 
     def make_species(self, pattern):
-        return Species(representative=pattern, prob_mutate=self.prob_mutate,
+        return Species(ancestor=pattern, prob_mutate=self.prob_mutate,
                        prob_mutate_add=self.prob_mutate_add, prob_mutate_merge=self.prob_mutate_merge,
                        prob_mutate_split=self.prob_mutate_split, prob_mutate_drop=self.prob_mutate_drop,
                        generation=self.generation, n_pools=self.n_pools,
@@ -95,12 +95,12 @@ class Optimizer:
                 else:
                     species = self.make_species(pattern)
                     self.species.append(species)
-                    repr_pattern.append(species.representative)
+                    repr_pattern.append(species.ancestor)
                     repr_indexes.append(i)
             else:
                 species = self.make_species(pattern)
                 self.species.append(species)
-                repr_pattern.append(species.representative)
+                repr_pattern.append(species.ancestor)
                 repr_indexes.append(i)
 
         self.fitness = []

@@ -49,7 +49,7 @@ class PatternSummarization:
 
     def get_patterns(self):
         species = filter(lambda s: s.convergence >= self.conv_thresh, self.optimizer.species[:self.n_best])
-        patterns = map(lambda s: s.representative.copy(), species)
+        patterns = map(lambda s: s.ancestor.copy(), species)
         patterns = filter(lambda p: p.accuracy >= self.min_acc, patterns)
         patterns = tuple(patterns)
         return patterns

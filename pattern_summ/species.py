@@ -8,11 +8,11 @@ from .util import get_random_seed_generator
 
 
 class Species:
-    def __init__(self, random_seed_generator=None, representative=None, prob_mutate=0.5,
+    def __init__(self, random_seed_generator=None, ancestor=None, prob_mutate=0.5,
                  prob_mutate_add=0.20, prob_mutate_merge=0.30, prob_mutate_split=0.30, prob_mutate_drop=0.20,
                  generation=None, n_pools=None):
         self.n_pools = n_pools or max(1, multiprocessing.cpu_count() - 1)
-        self.representative = representative
+        self.ancestor = ancestor
         self.prob_mutate = prob_mutate
         self.prob_mutate_add = prob_mutate_add
         self.prob_mutate_merge = prob_mutate_merge
@@ -24,11 +24,11 @@ class Species:
         self.population = []
         self._fitness = []
 
-        if self.representative:
-            self.add(self.representative)
+        if self.ancestor:
+            self.add(self.ancestor)
 
     def get_distance(self, pattern):
-        return self.representative - pattern
+        return self.ancestor - pattern
 
     def eliminate_to(self, n_survivors):
         assert self._fitness is not None
