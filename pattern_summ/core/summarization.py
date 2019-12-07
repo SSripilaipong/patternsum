@@ -1,6 +1,7 @@
 import pandas as pd
 
 from pattern_summ.data import DataManager
+from pattern_summ.pattern import Pattern
 from pattern_summ.optimizer import Optimizer
 from .hook import NoNewSpeciesHook
 
@@ -65,4 +66,21 @@ class PatternSummarization:
         patterns = tuple(patterns)
         return patterns
 
+    def get_species_report(self):
+        result = []
+        for species in self.optimizer.species:
+            ancestor = species.ancestor  # type: Pattern
 
+            report = {
+                'species': species,
+                'ancestor': ancestor,
+                'species_fitness': species.fitness,
+                'species_size': len(species),
+                'convergence': species.convergence,
+                'convergence_size': species.convergence_size,
+                'fitness': ancestor.fitness,
+                'accuracy': ancestor.accuracy,
+                'tightness': ancestor.tightness,
+            }
+            result.append(report)
+        return pd.DataFrame(result)

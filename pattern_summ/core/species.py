@@ -80,6 +80,11 @@ class Species:
         return collections.Counter(patterns).most_common()[0][1] / len(patterns)
 
     @property
+    def convergence_size(self):
+        size = sum(1 for p in self.population if p.action[-1]['generation'] != self.generation)
+        return size
+
+    @property
     def fitness(self):
         if type(self._fitness) is not np.array:
             self._fitness = np.array(self._fitness)
