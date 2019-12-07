@@ -1,12 +1,11 @@
 import random
 import functools
-import itertools
 import multiprocessing
 import gc
 import numpy as np
 
 
-from pattern_summ.species import Species
+from pattern_summ.core.species import Species
 from pattern_summ.util import get_random_seed_generator
 from pattern_summ.pattern import WordSequence, Pattern
 from .score import ScoreManager
