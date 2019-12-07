@@ -40,12 +40,22 @@ class PatternSummarization:
 
         self.optimizer.initialize()
 
-    def evolve(self, generations=1, random_seed=None, reset=False):
+    def evolve(self, generations=1, random_seed=None, reset=False, n_no_new_species=None):
         if reset or self.optimizer.generation == 0:
             self._initialize(random_seed)
 
+        hooks = []
+        if n_no_new_species is not None:
+            hooks.append(NoNewSpeciesHook(n_no_new_species))
+
         for _ in range(generations):
             self.optimizer.step()
+
+            for hook in hooks:
+                codes = hook.callback(self.optimizer)
+                for code in codes:
+                    if code == 'end':
+                        return
 
     def get_patterns(self):
         species = filter(lambda s: s.convergence >= self.conv_thresh, self.optimizer.species[:self.n_best])
@@ -53,3 +63,27 @@ class PatternSummarization:
         patterns = filter(lambda p: p.accuracy >= self.min_acc, patterns)
         patterns = tuple(patterns)
         return patterns
+
+
+class NoNewSpeciesHook:
+    def __init__(self, n_no_new_species):
+        self.n_no_new_species = n_no_new_species
+
+        self.count = n_no_new_species
+        self.discovered_species = set()
+
+    def callback(self, optimizer):
+        ancestors = [s.ancestor for s in optimizer.species]
+
+        before = len(self.discovered_species)
+        self.discovered_species.update(ancestors)
+        after = len(self.discovered_species)
+
+        if after > before:
+            self.count = self.n_no_new_species
+        else:
+            self.count -= 1
+            if self.count < 0:
+                return ['end']
+
+        return []

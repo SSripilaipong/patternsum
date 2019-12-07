@@ -47,10 +47,11 @@ def main():
                                prob_mutate_add=0.10, prob_mutate_merge=0.10, prob_mutate_split=0.45,
                                prob_mutate_drop=0.35,
                                n_best=10, min_acc=0.20)
-    opt.evolve(generations=10)
+    opt.evolve(generations=20, n_no_new_species=3)
     for s in opt.optimizer.species:  # type: Species
         p = s.ancestor
         print(f'    {p.fitness:5.2f} {p.accuracy:5.2f} {p.tightness:5.2f} {s.convergence:5.2f} {p.words}')
+    print('n generations:', opt.optimizer.generation)
     print()
     print('result:')
     for p in opt.get_patterns():
