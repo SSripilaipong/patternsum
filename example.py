@@ -30,9 +30,11 @@ def generate_data():
     thai_characters = [chr(3584 + i) for i in range(1, 90) if i not in (59, 60, 61, 62)]
 
     np.random.seed(random_seed)
+    random.seed(random_seed)
     random_string = pd.Series([''.join([random.choice(thai_characters) for _ in range(length)])
                                for length in np.random.randint(16, 28, 1000)])
     np.random.seed()
+    random.seed()
 
     data = pd.concat([data_จำกัด.sample(500, random_state=random_seed),
                       data_บริษัท.sample(500, random_state=random_seed),

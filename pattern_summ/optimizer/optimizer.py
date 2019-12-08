@@ -40,17 +40,14 @@ class Optimizer:
         self.pattern_scores = ScoreManager()
 
     def initialize(self):
-        if self.random_seed:
-            random.seed(self.random_seed)
-            np.random.seed(self.random_seed)
-
-        self.random_seed_generator = get_random_seed_generator(1, 99999, self.random_seed)
+        self.set_random_seed(self.random_seed)
 
         self.generate_population(self.population_size)
         self.calculate_fitness()
         self.specify()
 
         self.generation = 0
+        self.set_random_seed(random.randint(1, 9999999))
 
     def set_random_seed(self, random_seed):
         self.random_seed = random_seed
@@ -59,7 +56,7 @@ class Optimizer:
             random.seed(self.random_seed)
             np.random.seed(self.random_seed)
 
-        self.random_seed_generator = get_random_seed_generator(1, 99999, self.random_seed)
+        self.random_seed_generator = get_random_seed_generator(1, 99999)
 
     def make_species(self, pattern):
         return Species(ancestor=pattern, prob_mutate=self.prob_mutate,
@@ -213,9 +210,13 @@ class Optimizer:
             s.generation += 1
         self.generation += 1
 
+        self.set_random_seed(self.random_seed)
+
         self.eliminate()
         self.reproduce()
         self.specify()
+
+        self.set_random_seed(random.randint(1, 9999999))
 
 
 def _generate_population(indexes, random_seed, data_manager, tightness_alpha, tightness_beta, generation):

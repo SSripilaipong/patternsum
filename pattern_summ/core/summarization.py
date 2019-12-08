@@ -37,15 +37,13 @@ class PatternSummarization:
     def population_size(self):
         return self.optimizer.population_size
 
-    def _initialize(self, random_seed):
-        if random_seed:
-            self.optimizer.set_random_seed(random_seed)
-
+    def _initialize(self):
+        self.optimizer.set_random_seed(self.random_seed)
         self.optimizer.initialize()
 
-    def evolve(self, generations=1, random_seed=None, reset=False, n_no_new_species=None):
+    def evolve(self, generations=1, reset=False, n_no_new_species=None):
         if reset or self.optimizer.generation == 0:
-            self._initialize(random_seed)
+            self._initialize()
 
         hooks = []
         if n_no_new_species is not None:

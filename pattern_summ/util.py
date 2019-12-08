@@ -9,9 +9,6 @@ def keep_punc(r):
     return punc_pattern.sub(r'\\\1', r)
 
 
-def get_random_seed_generator(low=1, high=99999, random_seed=None):
-    if random_seed is not None:
-        random.seed(random_seed)
-
+def get_random_seed_generator(low=1, high=99999):
     while True:
         yield random.randint(low, high)
