@@ -3,9 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setuptools.setup(
     name='patternsum',
-    version='1.1',
+    version='1.1.1',
     packages=setuptools.find_packages(),
     url='https://github.com/SSripilaipong/patternsum',
     author='SSripilaipong',
@@ -19,4 +22,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=requirements,
 )
