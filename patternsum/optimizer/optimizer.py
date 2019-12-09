@@ -5,9 +5,9 @@ import gc
 import numpy as np
 
 
-from pattern_summ.core.species import Species
-from pattern_summ.util import get_random_seed_generator
-from pattern_summ.pattern import WordSequence, Pattern
+from patternsum.core.species import Species
+from patternsum.util import get_random_seed_generator
+from patternsum.pattern import WordSequence, Pattern
 from .score import ScoreManager
 
 

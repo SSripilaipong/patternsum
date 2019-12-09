@@ -2,7 +2,7 @@ import random
 import numpy as np
 import pandas as pd
 
-from pattern_summ import PatternSummarization, Species
+from patternsum import PatternSummarization, Species
 
 
 random_seed = 1234

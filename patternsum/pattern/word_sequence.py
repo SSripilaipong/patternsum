@@ -1,4 +1,4 @@
-from pattern_summ.util import keep_punc
+from patternsum.util import keep_punc
 import numpy as np
 
 

@@ -1,8 +1,8 @@
 import pandas as pd
 
-from pattern_summ.data import DataManager
-from pattern_summ.pattern import Pattern
-from pattern_summ.optimizer import Optimizer
+from patternsum.data import DataManager
+from patternsum.pattern import Pattern
+from patternsum.optimizer import Optimizer
 from .hook import NoNewSpeciesHook
 
 

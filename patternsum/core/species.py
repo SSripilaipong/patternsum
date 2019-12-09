@@ -4,7 +4,7 @@ import itertools
 import multiprocessing
 import numpy as np
 
-from pattern_summ.util import get_random_seed_generator
+from patternsum.util import get_random_seed_generator
 
 
 class Species:
