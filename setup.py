@@ -1,12 +1,22 @@
-from setuptools import setup
+import setuptools
 
-setup(
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
     name='patternsum',
     version='1.0',
-    packages=['patternsum', 'patternsum.core', 'patternsum.pattern', 'patternsum.optimizer'],
+    packages=setuptools.find_packages(),
     url='https://github.com/SSripilaipong/string-pattern-summ',
-    license='MIT',
     author='SSripilaipong',
     author_email='SHSnail@mail.com',
-    description='An algorithm to summarize possible patterns covered in a list of strings using Genetic Algorithm.'
+    description='An algorithm to summarize possible patterns covered in a list of strings using Genetic Algorithm.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.6',
 )
