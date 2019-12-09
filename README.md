@@ -8,7 +8,7 @@ An algorithm to summarize possible patterns, which, in this context, are sequenc
 
 This module requires only `numpy` and `pandas`.
 
-#### Installing
+### Installing
 
 ```
 pip install patternsum
